@@ -14,8 +14,8 @@ import Colors from "../../Shared/Colors";
 import moment from "moment";
 import { useUser } from "@clerk/clerk-expo";
 import GlobalApi from "../../Services/GlobalApi";
-
 export default function BookingSection({ hospital }) {
+ 
   const { isLoaded, isSignedIn, user } = useUser();
 
   const [next7Days, setNext7Days] = useState([]);

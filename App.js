@@ -5,17 +5,18 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import Home from "./App/Screens/Home";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigation from "./App/Navigations/TabNavigation";
-import { useFonts } from 'expo-font';
-
+import { useFonts } from "expo-font";
+import SignUpScreen from "./App/Screens/SignUpScreen";
+import SignInWithOAuth from "./App/Components/SignInWithOAuth";
+import SignInScreen from "./App/Screens/SignInScreen";
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'appfont': require('./assets/fonts/Outfit-Regular.ttf'),
-    'appfontbold': require('./assets/fonts/Outfit-Bold.ttf'),
-    'appfontsemibold': require('./assets/fonts/Outfit-SemiBold.ttf'),
-    'appfontlight': require('./assets/fonts/Outfit-Light.ttf'),
-
+    appfont: require("./assets/fonts/Outfit-Regular.ttf"),
+    appfontbold: require("./assets/fonts/Outfit-Bold.ttf"),
+    appfontsemibold: require("./assets/fonts/Outfit-SemiBold.ttf"),
+    appfontlight: require("./assets/fonts/Outfit-Light.ttf"),
   });
-  if(!fontsLoaded){
+  if (!fontsLoaded) {
     return null;
   }
   return (
@@ -25,14 +26,14 @@ export default function App() {
       }
     >
       <SafeAreaView style={styles.container}>
-        <StatusBar hidden/>
+        <StatusBar hidden />
         <SignedIn>
           <NavigationContainer>
-            <TabNavigation/>
+            <TabNavigation />
           </NavigationContainer>
         </SignedIn>
         <SignedOut>
-          <Login />
+        <Login/>
         </SignedOut>
       </SafeAreaView>
     </ClerkProvider>

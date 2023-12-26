@@ -6,6 +6,8 @@ export default {
   deepgrey: "#808080",
   PRIMARY: "#00A9FF",
   SECONDARY: "#00AAFF1D",
+  green : '#2BB789',
+  darkGreen :"#006A42"
 };
 
 
