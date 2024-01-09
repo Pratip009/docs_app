@@ -26,7 +26,7 @@ export default function HospitalItem({ hospital }) {
         <Text style={{ fontFamily: "appfontsemibold", fontSize: 16 }}>
           {hospital.attributes.Name}
         </Text>
-        <Text style={{ color: Colors.deepgrey ,fontSize:11}}>
+        <Text style={{ color: Colors.deepgrey, fontSize: 11 }}>
           {hospital.attributes.Address}
         </Text>
       </View>

@@ -75,8 +75,8 @@ export default function HospitalInfo({ hospital }) {
             Monday , Sunday | 11am - 2pm
           </Text>
         </View>
-        
-        <ActionButton/>
+
+        <ActionButton />
         <View
           style={{
             borderBottomWidth: 1,
@@ -86,8 +86,10 @@ export default function HospitalInfo({ hospital }) {
             marginTop: 10,
           }}
         ></View>
-        <SubHeading subHeadingTitle={'About'}/>
-        <Text style={{fontFamily:'appfontlight'}}>{hospital.attributes.Description}</Text>
+        <SubHeading subHeadingTitle={"About"} />
+        <Text style={{ fontFamily: "appfontlight" }}>
+          {hospital.attributes.Description}
+        </Text>
       </View>
     )
   );

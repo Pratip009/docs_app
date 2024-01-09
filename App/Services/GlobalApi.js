@@ -1,8 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = "http://192.168.1.103:1337/api";
+const BASE_URL = "https://impressive-prosperity-7cd28baf7d.strapiapp.com/api";
+// const BASE_URL = "http://localhost:1337/api";
+
+
 const API_KEY =
-  "c04fd7607dd4c554fe79f5f1564e8cccb28279b8fb6c394a45106b00ef321af74cb17b6635223d99f09ac5880c83906852711d5131701bb55aaba26ae25ecb96895663e0f544359d6b65a9dd90fd3e54ac8d8db3dfa136d7855b4fdd047b20ab77f8f095b40726fcb4908666b202bad8f7677f87a721caef0b0bfbdddd393780";
+  "255410cc94f8dd21f9b3363c2dca78b7e4c6078bf6b36fb8af3031607147493b7e315c1e76b6613fea36795406e42acfa2295168d7970708eafc2a1c4733f8f393c1f7c6247ff48d1f22c54395f5a4245b058826ce5636be611b3851c7900fd9d3e999d6ff64464cd30fcea709a341417046135c2e0294b14367586f7478b886";
 const axiosInstace = axios.create({
   baseURL: BASE_URL,
   headers: {

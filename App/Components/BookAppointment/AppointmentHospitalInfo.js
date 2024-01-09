@@ -2,9 +2,8 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import PageHeader from "../Shared/PageHeader";
 import Colors from "../../Shared/Colors";
-import { Ionicons } from '@expo/vector-icons';
-import HorizontalLine from '../Shared/HorizontalLine';
-
+import { Ionicons } from "@expo/vector-icons";
+import HorizontalLine from "../Shared/HorizontalLine";
 
 export default function AppointmentHospitalInfo({ hospital }) {
   return (
@@ -33,21 +32,29 @@ export default function AppointmentHospitalInfo({ hospital }) {
           >
             {hospital.attributes.Name}
           </Text>
-          <View style={{
-                display: 'flex', flexDirection: 'row',
-                gap: 5, alignItems: 'center'
-            }}>
-                <Ionicons name="location" size={22} color={Colors.PRIMARY} />
-                <Text style={{
-                    fontSize: 16,
-                    fontFamily: 'appfont',
-                    color: Colors.GRAY,
-                    width:'70%'
-                }}>{hospital.attributes.Address}</Text>
-            </View>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              alignItems: "center",
+            }}
+          >
+            <Ionicons name="location" size={22} color={Colors.PRIMARY} />
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: "appfont",
+                color: Colors.GRAY,
+                width: "70%",
+              }}
+            >
+              {hospital.attributes.Address}
+            </Text>
+          </View>
         </View>
       </View>
-      <HorizontalLine/>
+      <HorizontalLine />
     </View>
   );
 }

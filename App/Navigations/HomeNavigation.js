@@ -8,12 +8,14 @@ import DoctorDetails from "../Screens/DoctorDetails";
 import BookAppointment from "../Screens/BookAppointment";
 import SignInScreen from "../Screens/SignInScreen";
 import SignUpScreen from "../Screens/SignUpScreen";
+import Login from "../Screens/Login";
 
 const Stack = createStackNavigator();
 export default function HomeNavigation() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} />
+
       <Stack.Screen
         name="hospital-doctor-list-screen"
         component={HospitalDoctorsListScreen}
@@ -21,8 +23,8 @@ export default function HomeNavigation() {
       <Stack.Screen name="hospital-detail" component={HospitalDetails} />
       <Stack.Screen name="doctor-detail" component={DoctorDetails} />
       <Stack.Screen name="book-appointment" component={BookAppointment} />
-      <Stack.Screen name="sign-in" component={SignInScreen}/>
-      <Stack.Screen name="sign-up" component={SignUpScreen}/>
+      <Stack.Screen name="sign-in" component={SignInScreen} />
+      <Stack.Screen name="sign-up" component={SignUpScreen} />
     </Stack.Navigator>
   );
 }

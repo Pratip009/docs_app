@@ -9,6 +9,7 @@ import { useFonts } from "expo-font";
 import SignUpScreen from "./App/Screens/SignUpScreen";
 import SignInWithOAuth from "./App/Components/SignInWithOAuth";
 import SignInScreen from "./App/Screens/SignInScreen";
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     appfont: require("./assets/fonts/Outfit-Regular.ttf"),
@@ -33,7 +34,7 @@ export default function App() {
           </NavigationContainer>
         </SignedIn>
         <SignedOut>
-        <Login/>
+          <Login />
         </SignedOut>
       </SafeAreaView>
     </ClerkProvider>

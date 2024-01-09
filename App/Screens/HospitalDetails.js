@@ -38,7 +38,7 @@ export default function HospitalDetails() {
                 padding: 20,
               }}
             >
-              <HospitalInfo hospital={hospital}/>
+              <HospitalInfo hospital={hospital} />
             </View>
           </View>
         </ScrollView>

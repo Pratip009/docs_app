@@ -1,8 +1,9 @@
 import React from "react";
 import * as WebBrowser from "expo-web-browser";
-import { Button } from "react-native";
+import { Button, Dimensions, Text, TouchableOpacity } from "react-native";
 import { useOAuth } from "@clerk/clerk-expo";
 import { useWarmUpBrowser } from "../../hooks/warmUpBrowser"; 
+import Colors from "../Shared/Colors";
 WebBrowser.maybeCompleteAuthSession();
  
 const SignInWithOAuth = () => {
@@ -28,10 +29,19 @@ const SignInWithOAuth = () => {
   }, []);
  
   return (
-    <Button
-      title="Sign in with Google"
-      onPress={onPress}
-    />
+    <TouchableOpacity 
+    onPress={onPress}
+    style={{padding:16,
+    backgroundColor:Colors.white,
+    borderRadius:90,
+    alignItems:'center',
+    marginTop:20,
+    width:Dimensions.get('screen').width*0.8,
+    }}>
+      
+        <Text style={{fontSize:17,color:Colors.blue,fontFamily:"appfontbold"}}>
+          Login With Google</Text>
+    </TouchableOpacity>
   );
 }
 export default SignInWithOAuth;

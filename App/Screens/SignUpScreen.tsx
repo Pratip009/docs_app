@@ -7,7 +7,6 @@ import Colors from "../Shared/Colors";
 export default function SignUpScreen(props) {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [firstName, setFirstName] = React.useState("");
-  const [phoneNumber, setPhonenumber] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -26,7 +25,6 @@ export default function SignUpScreen(props) {
       await signUp.create({
         firstName,
         lastName,
-        phoneNumber,
         emailAddress,
         password,
       });
@@ -120,19 +118,6 @@ export default function SignUpScreen(props) {
                 placeholder="Doe"
                 placeholderTextColor={Colors.grey}
                 onChangeText={(lastName) => setLastName(lastName)}
-              />
-            </View>
-            <View style={styles.SignupView}>
-              <View style={styles.level}>
-                <Text style={styles.levelText}>Mobile Number</Text>
-              </View>
-              <TextInput
-                style={styles.textfield}
-                autoCapitalize="none"
-                value={phoneNumber}
-                placeholder="1234567890"
-                placeholderTextColor={Colors.grey}
-                onChangeText={(phoneNumber) => setPhonenumber(phoneNumber)}
               />
             </View>
             <View style={styles.SignupView}>

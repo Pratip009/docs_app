@@ -12,9 +12,9 @@ export default function BookAppointment() {
   return (
     <ScrollView style={{ padding: 20 }}>
       <AppointmentHospitalInfo hospital={param.hospital} />
-      <ActionButton/>
-      <HorizontalLine/>
-      <BookingSection hospital={param.hospital}/>
+      <ActionButton />
+      <HorizontalLine />
+      <BookingSection hospital={param.hospital} />
     </ScrollView>
   );
 }

@@ -58,7 +58,9 @@ export default function Categories() {
                   }}
                 />
               </View>
-              <Text style={{fontSize:12,fontFamily:'appfont'}}>{item.attributes.Name}</Text>
+              <Text style={{ fontSize: 12, fontFamily: "appfont" }}>
+                {item.attributes.Name}
+              </Text>
             </TouchableOpacity>
           )
         }

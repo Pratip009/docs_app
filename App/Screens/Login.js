@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import app from "../../assets/Images/loginUi.jpg";
+import app from "../../assets/Images/cd.png";
 import Colors from "../Shared/Colors";
 import SignInWithOAuth from "../Components/SignInWithOAuth";
 import Responsive from "../Shared/Responsive";
@@ -31,7 +31,11 @@ export default function Login() {
         <Text style={styles.heading}>Your Ultimate Doctor</Text>
         <Text style={styles.heading}>Appointment Booking App</Text>
         <Text
-          style={{ textAlign: "center", marginTop: 20, color: Colors.white }}
+          style={{
+            textAlign: "center",
+            marginTop: 20,
+            color: Colors.white,
+          }}
         >
           Book Appointment Effortlessly and Manage Your Health Journey
         </Text>
