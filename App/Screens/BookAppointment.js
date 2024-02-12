@@ -8,6 +8,7 @@ import BookingSection from "../Components/BookAppointment/BookingSection";
 import { ScrollView } from "react-native";
 
 export default function BookAppointment() {
+  
   const param = useRoute().params;
   return (
     <ScrollView style={{ padding: 20 }}>
