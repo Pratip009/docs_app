@@ -2,11 +2,10 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../../App/Shared/Colors";
-import { useNavigation } from '@react-navigation/native';
-export default function DoctorCardItem({ doctor }) {
+export default function HospitalDoctorCardItem({ hospital }) {
   useEffect(() => {
-    console.log("doctor data", doctor);
-  }, [doctor]);
+    console.log("doctor data", hospital);
+  }, [hospital]);
   return (
     <View
       style={{

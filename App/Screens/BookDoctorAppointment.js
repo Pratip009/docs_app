@@ -1,21 +1,21 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
-import AppointmentHospitalInfo from "../Components/BookAppointment/AppointmentHospitalInfo";
 import ActionButton from "../Components/HospitalDetail/ActionButton";
 import HorizontalLine from "../Components/Shared/HorizontalLine";
-import BookingSection from "../Components/BookAppointment/BookingSection";
+import AppointmentDoctorInfo from "../Components/BookAppointment/AppointmentDoctorInfo";
+import BookingDoctorSection from "../Components/BookAppointment/BookingDoctorSection";
 import { ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-export default function BookAppointment() {
-  const navigation = useNavigation();
+
+export default function BookDoctorAppointment() {
+  
   const param = useRoute().params;
   return (
     <ScrollView style={{ padding: 20 }}>
-      <AppointmentHospitalInfo hospital={param.hospital} />
+      <AppointmentDoctorInfo doctor={param.doctor} />
       <ActionButton />
       <HorizontalLine />
-      <BookingSection hospital={param.hospital} navigation={navigation}/>
+      <BookingDoctorSection doctor={param.doctor} />
     </ScrollView>
   );
 }

@@ -25,7 +25,7 @@ export default function HospitalDoctorTab({ activeTab }) {
           <Text
             style={[activeIndex == 0 ? styles.activeText : styles.inActiveTaxt]}
           >
-            Hospital
+            Chember
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -1,240 +1,90 @@
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
-  ToastAndroid,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import SubHeading from "../Home/SubHeading";
 import Colors from "../../Shared/Colors";
-import moment from "moment";
-import { useUser } from "@clerk/clerk-expo";
-import GlobalApi from "../../Services/GlobalApi";
+import { useNavigation } from "@react-navigation/native";
+import DoctorDetailsItem from "../Shared/DoctorDetailsItem";
+import { useRoute } from "@react-navigation/native";
 export default function BookingSection({ hospital }) {
-  const { isLoaded, isSignedIn, user } = useUser();
-
-  const [next7Days, setNext7Days] = useState([]);
-  const [timeList, setTimeList] = useState([]);
-  const [loader, setLoader] = useState(false);
-  const [selectedDate, setSelectedDate] = useState();
-  const [selectedTime, setSelectedTime] = useState();
-  const [notes, setNotes] = useState();
-
+  const param = useRoute().params;
+const hospitalId = hospital.id
   useEffect(() => {
-    getDays();
-    getTime();
-  }, []);
+    console.log("hospital:   ", hospital);
+    console.log("Doctors data:", hospital?.attributes?.doctors?.data);
+  }, [hospital]);
 
-  const getDays = () => {
-    const today = moment();
-    const nextSevenDays = [];
-    for (let i = 1; i < 8; i++) {
-      const date = moment().add(i, "days");
-      nextSevenDays.push({
-        date: date,
-        day: date.format("ddd"), //Tue, Mon
-        formmatedDate: date.format("Do MMM"), //4th Oct
-      });
-    }
-
-    setNext7Days(nextSevenDays);
-  };
-
-  const getTime = () => {
-    const timeList = [];
-    for (let i = 8; i <= 12; i++) {
-      timeList.push({
-        time: i + ":00 AM",
-      });
-      timeList.push({
-        time: i + ":30 AM",
-      });
-    }
-    for (let i = 1; i <= 6; i++) {
-      timeList.push({
-        time: i + ":00 PM",
-      });
-      timeList.push({
-        time: i + ":30 PM",
-      });
-    }
-
-    setTimeList(timeList);
-  };
-
-  const bookAppointment = () => {
-    setLoader(true);
-    const data = {
-      data: {
-        UserName: user.fullName,
-        Date: selectedDate,
-        Time: selectedTime,
-        Email: user.primaryEmailAddress.emailAddress,
-        hospitals: hospital.id,
-        note: notes,
-      },
-    };
-    console.log(data);
-    GlobalApi.createAppointment(data).then(
-      (resp) => {
-        console.log(resp);
-        setLoader(false);
-        ToastAndroid.show(
-          "Appointment Booked Successfully!",
-          ToastAndroid.LONG
-        );
-      },
-      (error) => {
-        setLoader(false);
-      }
+  const navigation = useNavigation();
+  const renderDoctor = ({ item }) => {
+    console.log("data", item);
+    return (
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("booking-to-doctor", {
+              doctor: item,
+              hospital: hospital,
+            })
+          }
+        >
+          <DoctorDetailsItem doctor={item} />
+        </TouchableOpacity>
+      </View>
     );
   };
+
   return (
-    <View>
-      <Text
-        style={{
-          fontSize: 18,
-          color: Colors.grey,
-        }}
-      >
-        Book Appointment
-      </Text>
-
-      <SubHeading subHeadingTitle={"Day"} seelAll={false} />
-
-      <FlatList
-        data={next7Days}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.dayButton,
-              selectedDate == item.date
-                ? { backgroundColor: Colors.PRIMARY }
-                : null,
-            ]}
-            onPress={() => setSelectedDate(item.date)}
-          >
-            <Text
-              style={[
-                {
-                  fontFamily: "appfont",
-                },
-                selectedDate == item.date ? { color: Colors.white } : null,
-              ]}
-            >
-              {item.day}
-            </Text>
-            <Text
-              style={[
-                {
-                  fontFamily: "appfontsemibold",
-                  fontSize: 16,
-                },
-                selectedDate == item.date ? { color: Colors.white } : null,
-              ]}
-            >
-              {item.formmatedDate}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-      <SubHeading subHeadingTitle={"Time"} seelAll={false} />
-      <FlatList
-        data={timeList}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.dayButton,
-              {
-                paddingVertical: 16,
-              },
-              selectedTime == item.time
-                ? { backgroundColor: Colors.PRIMARY }
-                : null,
-            ]}
-            onPress={() => setSelectedTime(item.time)}
-          >
-            <Text
-              style={[
-                {
-                  fontFamily: "appfontsemibold",
-                  fontSize: 16,
-                },
-                selectedTime == item.time ? { color: Colors.white } : null,
-              ]}
-            >
-              {item.time}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
-
-      <SubHeading subHeadingTitle={"Note"} seelAll={false} />
-
-      <TextInput
-        numberOfLines={3}
-        onChangeText={(value) => setNotes(value)}
-        style={{
-          backgroundColor: Colors.grey,
-          padding: 10,
-          borderRadius: 10,
-          borderColor: Colors.SECONDARY,
-          borderWidth: 1,
-          textAlignVertical: "top",
-        }}
-        placeholder="Write Notes Here"
-      />
-
-      <TouchableOpacity
-        onPress={() => bookAppointment()}
-        disabled={loader}
-        style={{
-          padding: 13,
-          backgroundColor: Colors.PRIMARY,
-          margin: 10,
-          borderRadius: 99,
-          left: 0,
-          right: 0,
-          marginBottom: 10,
-          zIndex: 20,
-        }}
-      >
-        {!loader ? (
-          <Text
-            style={{
-              color: Colors.white,
-              textAlign: "center",
-              fontFamily: "appfontsemibold",
-              fontSize: 17,
-            }}
-          >
-            Make Appointment
-          </Text>
-        ) : (
-          <ActivityIndicator />
-        )}
-      </TouchableOpacity>
+    <View style={styles.container}>
+      {hospital?.attributes?.doctors?.data?.length > 0 ? (
+        <FlatList
+          data={hospital.attributes?.doctors?.data || []}
+          renderItem={renderDoctor}
+          keyExtractor={(item) => item.id.toString()}
+        />
+      ) : (
+        <Text>No doctors found for this hospital</Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  dayButton: {
-    borderWidth: 1,
-    borderRadius: 99,
-    padding: 5,
+  container: {
+    flex: 1,
+    marginTop: 20,
+  },
+  header: {
+    fontSize: 20,
+    fontFamily: "appfontbold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
 
-    paddingHorizontal: 20,
-    alignItems: "center",
-    marginRight: 10,
-    borderColor: Colors.grey,
+  Registration: {
+    fontSize: 16,
+    color: "black",
+    fontFamily: "appfontsemibold",
+  },
+  patients: {
+    fontSize: 16,
+    color: "black",
+    fontFamily: "appfont",
+  },
+  button: {
+    fontSize: 16,
+    color: Colors.white,
+    fontFamily: "appfont",
+    borderWidth: 1,
+    borderColor: Colors.white,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    textAlign: "center",
+    backgroundColor: Colors.SECONDARY,
+    margin: 5,
   },
 });

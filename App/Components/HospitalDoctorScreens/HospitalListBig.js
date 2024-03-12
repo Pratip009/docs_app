@@ -6,9 +6,10 @@ import { useNavigation } from "@react-navigation/native";
 export default function HospitalListBig({ hospitalList }) {
   const navigation = useNavigation();
   return (
-    <View style={{ marginTop: 15 }}>
+    <View style={{ marginTop: 15,marginBottom:140 }}>
       <FlatList
         data={hospitalList}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() =>

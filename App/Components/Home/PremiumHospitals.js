@@ -1,4 +1,10 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import SubHeading from "./SubHeading";
 import GlobalApi from "../../Services/GlobalApi";
@@ -21,22 +27,24 @@ export default function PremiumHospitals() {
     hospitalList && (
       <View style={{ marginTop: 10 }}>
         <SubHeading subHeadingTitle={"Our Premium Chembers"} />
-        <FlatList
-          data={hospitalList}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("hospital-detail", {
-                  hospital: item,
-                })
-              }
-            >
-              <HospitalItem hospital={item} />
-            </TouchableOpacity>
-          )}
-        />
+        <View style={{}}>
+          <FlatList
+            data={hospitalList}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("hospital-detail", {
+                    hospital: item,
+                  })
+                }
+              >
+                <HospitalItem hospital={item} />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       </View>
     )
   );

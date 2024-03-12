@@ -3,16 +3,23 @@ import {
   Text,
   Image,
   StyleSheet,
-  Dimensions,
-  TouchableOpacity,
+  
 } from "react-native";
 import React from "react";
 import app from "../../assets/Images/cd.png";
 import Colors from "../Shared/Colors";
 import SignInWithOAuth from "../Components/SignInWithOAuth";
 import Responsive from "../Shared/Responsive";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
+  const navigation = useNavigation();
+  const onLoginSuccess = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    });
+  };
   return (
     <View style={{ alignItems: "center" }}>
       <Image source={app} style={styles.appImage} />
@@ -40,7 +47,7 @@ export default function Login() {
           Book Appointment Effortlessly and Manage Your Health Journey
         </Text>
 
-        <SignInWithOAuth />
+        <SignInWithOAuth onLoginSuccess={onLoginSuccess}/>
       </View>
     </View>
   );

@@ -1,17 +1,36 @@
 import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useUser } from "@clerk/clerk-expo"; // Assuming you're using Clerk for authentication
 import PageHeader from "../Components/Shared/PageHeader";
 import HospitalInfo from "../Components/HospitalDetail/HospitalInfo";
 import Colors from "../../App/Shared/Colors";
+import DoctorInfo from "../Components/DoctorDetails/DoctorInfo";
 
 export default function HospitalDetails() {
   const [hospital, setHospital] = useState();
+  const [doctor, setDoctor] = useState();
   const param = useRoute().params;
   const navigation = useNavigation();
+  const { isSignedIn } = useUser(); // Use the useUser hook to check if the user is signed in
+
   useEffect(() => {
     setHospital(param.hospital);
-  }, []);
+    setDoctor(param.doctor);
+  }, [param.hospital, param.doctor]);
+
+  const handleViewDoctors = () => {
+    if (isSignedIn) {
+      // User is signed in, navigate to the book-appointment screen
+      navigation.navigate("book-appointment", {
+        hospital: hospital,
+        doctor: doctor,
+      });
+    } else {
+      // User is not signed in, navigate to the sign-in screen
+      navigation.navigate("signin"); // Replace "SignIn" with the actual route name of your sign-in screen
+    }
+  };
 
   return (
     hospital && (
@@ -28,7 +47,6 @@ export default function HospitalDetails() {
                 height: 260,
               }}
             />
-
             <View
               style={{
                 marginTop: -20,
@@ -39,15 +57,12 @@ export default function HospitalDetails() {
               }}
             >
               <HospitalInfo hospital={hospital} />
+              <DoctorInfo doctor={doctor} />
             </View>
           </View>
         </ScrollView>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("book-appointment", {
-              hospital: hospital,
-            })
-          }
+          onPress={handleViewDoctors}
           style={{
             padding: 13,
             backgroundColor: Colors.PRIMARY,
@@ -67,7 +82,7 @@ export default function HospitalDetails() {
               fontSize: 17,
             }}
           >
-            Book Appointment
+            View Doctors
           </Text>
         </TouchableOpacity>
       </View>

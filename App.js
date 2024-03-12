@@ -6,15 +6,8 @@ import Home from "./App/Screens/Home";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigation from "./App/Navigations/TabNavigation";
 import { createStackNavigator } from "@react-navigation/stack";
-
+import { AuthProvider, useAuth } from "./AuthContext";
 import { useFonts } from "expo-font";
-import SignInWithOAuth from "./App/Components/SignInWithOAuth";
-import HospitalDoctorsListScreen from "./App/Screens/HospitalDoctorsListScreen";
-import HospitalDetails from "./App/Screens/HospitalDetails";
-import DoctorDetails from "./App/Screens/DoctorDetails";
-import BookAppointment from "./App/Screens/BookAppointment";
-import SignInScreen from "./App/Screens/SignInScreen";
-import SignUpScreen from "./App/Screens/SignUpScreen";
 const Stack = createStackNavigator();
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -32,24 +25,14 @@ export default function App() {
         "pk_test_c3RpcnJlZC1zY29ycGlvbi00MC5jbGVyay5hY2NvdW50cy5kZXYk"
       }
     >
-      <SafeAreaView style={styles.container}>
-        <StatusBar hidden />
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={Home} />
-
-            <Stack.Screen
-              name="hospital-doctor-list-screen"
-              component={HospitalDoctorsListScreen}
-            />
-            <Stack.Screen name="hospital-detail" component={HospitalDetails} />
-            <Stack.Screen name="doctor-detail" component={DoctorDetails} />
-            <Stack.Screen name="book-appointment" component={BookAppointment} />
-            <Stack.Screen name="sign-in" component={SignInScreen} />
-            <Stack.Screen name="sign-up" component={SignUpScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaView>
+      <AuthProvider>
+        <SafeAreaView style={styles.container}>
+          <StatusBar hidden />
+          <NavigationContainer>
+            <TabNavigation />
+          </NavigationContainer>
+        </SafeAreaView>
+      </AuthProvider>
     </ClerkProvider>
   );
 }
@@ -60,3 +43,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+
