@@ -2,25 +2,16 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import React from "react";
 import Colors from "../../../App/Shared/Colors";
 import { Ionicons } from "@expo/vector-icons";
-export default function ActionButton() {
+export default function ActionButtonDoctor() {
   const actionButtonList = [
-    
+ 
     {
       id: 1,
       name: "Email",
       icon: "chatbubble-ellipses",
     },
-    {
-      id: 2,
-      name: "Phone",
-      icon: "call",
-    },
-    {
-      id: 3,
-      name: "Direction",
-      icon: "map",
-    },
    
+  
   ];
 
   return (
@@ -29,7 +20,7 @@ export default function ActionButton() {
         data={actionButtonList}
         columnWrapperStyle={{
           flex: 1,
-          justifyContent:"space-around",
+          justifyContent:"start",
         }}
         numColumns={5}
         renderItem={({ item }) => (

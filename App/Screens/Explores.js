@@ -27,7 +27,7 @@ export default function Explores() {
   }
   const getAllDoctors=()=>{
     GlobalApi.getAllDoctors().then(resp=>{
-      console.log(resp.data.data);
+   
       setDoctorsList(resp.data.data);
     })
   }

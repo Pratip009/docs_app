@@ -9,6 +9,7 @@ import DoctorProfile from "../Screens/DoctorScreens/TabScreens/DoctorProfile";
 import DoctorAppointments from "../Screens/DoctorScreens/TabScreens/DoctorAppointment";
 import DoctorHospitalAppointments from "../Screens/DoctorScreens/TabScreens/DcotorHospitalAppointment";
 import Colors from "../Shared/Colors";
+import { FontAwesome } from "@expo/vector-icons";
 export default function DoctorTabNavigtion({ route }) {
   const { doctorId, token } = route.params;
   const Tab = createBottomTabNavigator();
@@ -29,6 +30,7 @@ export default function DoctorTabNavigtion({ route }) {
           ),
         }}
       />
+
       <Tab.Screen
         name="Doc Appt."
         component={DoctorAppointments}

@@ -1,11 +1,11 @@
-import React from "react";
 import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
+import React from "react";
 import Colors from "../../Shared/Colors";
+import moment from "moment";
 import HorizontalLine from "../Shared/HorizontalLine";
 import { Ionicons } from "@expo/vector-icons";
-import moment from "moment";
 
-export default function AppointmentCardItem({ appointment, onRemove }) {
+export default function DoctorAppointmentCardItem({ appointment, onRemove }) {
   const handleCancelAppointment = () => {
     Alert.alert(
       "Cancel Appointment",
@@ -23,7 +23,7 @@ export default function AppointmentCardItem({ appointment, onRemove }) {
 
   const cancelAppointment = async () => {
     const appointmentId = appointment.id;
-    const url = `https://doc-back-new.onrender.com/api/hospital-appointments/${appointmentId}`;
+    const url = `https://doc-back-new.onrender.com/api/doctors-appointments/${appointmentId}`;
 
     try {
       const response = await fetch(url, {
@@ -49,9 +49,7 @@ export default function AppointmentCardItem({ appointment, onRemove }) {
       );
     }
   };
-
-  const isCanceled = appointment?.attributes?.status === "canceled"; // Check if the appointment status is 'canceled'
-
+  const isCanceled = appointment?.attributes?.status === "canceled";
   return (
     <View
       style={{
@@ -63,7 +61,7 @@ export default function AppointmentCardItem({ appointment, onRemove }) {
         marginTop: 15,
       }}
     >
-      {isCanceled && ( // Conditional rendering based on the canceled status
+      {isCanceled && (
         <View
           style={{
             backgroundColor: "white",
@@ -149,7 +147,15 @@ export default function AppointmentCardItem({ appointment, onRemove }) {
           >
             <Ionicons name="location" size={20} color={Colors.PRIMARY} />
             <Text style={{ fontFamily: "appfont", color: "black" }}>
-              {appointment.attributes.hospital.data.attributes.Address}
+              {appointment.attributes.area}
+            </Text>
+            <Ionicons
+              name="newspaper-outline"
+              size={20}
+              color={Colors.PRIMARY}
+            />
+            <Text style={{ fontFamily: "appfont", color: "black" }}>
+              {appointment.attributes.day}
             </Text>
           </View>
           <View

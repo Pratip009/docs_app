@@ -9,7 +9,8 @@ import {
   Image,
   TouchableOpacity,
   Switch,
-  Alert
+  Alert,
+  Linking,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import { useUser } from "@clerk/clerk-expo";
@@ -17,6 +18,7 @@ import { Modal, TextInput, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Colors from "../Shared/Colors";
 const SECTIONS = [
   {
     header: "Preferences",
@@ -58,7 +60,7 @@ export default function Profile() {
   const { isLoaded, isSignedIn, user } = useUser();
   const navigation = useNavigation();
   if (!isLoaded || !isSignedIn) {
-    return null;
+    return <Text>Loading...</Text>;
   }
   const [form, setForm] = useState({
     language: "English",
@@ -93,8 +95,6 @@ export default function Profile() {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
     }
@@ -123,10 +123,31 @@ export default function Profile() {
         ],
         { cancelable: false }
       );
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
+
+  const handlePress = () => {
+    // You can still include an alert if necessary, or remove this part
+    Alert.alert("Confirm", "Are you sure you want to delete your account?", [
+      // User confirms deletion
+      {
+        text: "Yes",
+        onPress: () => {
+          // Here you open the URL
+          Linking.openURL("https://data-safety-policy.onrender.com/").catch(
+            (err) => {
+              // Handle any errors
+              console.error("Failed to open URL", err);
+              Alert.alert("Failed to open the link");
+            }
+          );
+        },
+      },
+      // User cancels the action
+      { text: "No" },
+    ]);
+  };
+
   return (
     <SafeAreaView style={{ backgroundColor: "#f6f6f6" }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -292,6 +313,13 @@ export default function Profile() {
             </View>
           </View>
         ))}
+        <View style={styles.deleteAccountContainer}>
+          <Button
+            title="Delete Account"
+            color={Colors.red}
+            onPress={handlePress}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -300,6 +328,16 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 24,
+  },
+  deleteAccountContainer: {
+    width: "100%", // Ensure the container takes the full width
+    alignItems: "center", // This centers the child button horizontally
+    justifyContent: "center", // This centers the child button vertically, if needed
+    padding: 10, // Optional, for some spacing around
+  },
+  buttonStyle: {
+    width: "50%", // Set the button width to 50% of its parent container
+    alignSelf: "center", 
   },
 
   title: {

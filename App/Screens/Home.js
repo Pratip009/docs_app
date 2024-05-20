@@ -11,6 +11,7 @@ import AllDoctors from "../Components/Home/AllDoctors";
 import Responsive from "../Shared/Responsive";
 import SearchResultsList from "../Components/Home/SearchResultList";
 import { useState } from "react";
+import OurDoctors from "../Components/Home/OurDoctors";
 const Home = () => {
   const { isLoaded, signOut } = useAuth();
   const [results, setResults] = useState([]);
@@ -18,9 +19,12 @@ const Home = () => {
   return (
     <ScrollView
       style={{
-        padding: Responsive.height10 * 2,
-        paddingTop: Responsive.height10,
-        marginTop: Responsive.height10,
+        // padding: Responsive.height10 * 2,
+        // paddingTop: Responsive.height10,
+        // marginTop: Responsive.height10,
+        padding:20,
+      
+        
       }}
     >
       <Header />
@@ -42,8 +46,11 @@ const Home = () => {
       <Slider />
       <Categories />
       <PremiumHospitals />
-      <PremiumHospitals />
-
+      <View style={{
+        marginBottom:30
+      }}>
+      <OurDoctors />
+      </View>
       {/* <Button title="SignOut" onPress={() => signOut()}></Button> */}
       {/* <Text>Home</Text> */}
     </ScrollView>

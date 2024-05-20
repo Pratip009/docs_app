@@ -38,7 +38,7 @@ const DoctorProfile = ({ route, navigation }) => {
             onPress: async () => {
               // Clear the user token from AsyncStorage
               await AsyncStorage.removeItem("userToken");
-              console.log("clickedddd");
+
               // Navigate back to the login screen
               navigation.replace("doctor-login");
             },
@@ -46,9 +46,7 @@ const DoctorProfile = ({ route, navigation }) => {
         ],
         { cancelable: false }
       );
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+    } catch (error) {}
   };
 
   const handleTextChange = (text, field) => {
@@ -61,7 +59,7 @@ const DoctorProfile = ({ route, navigation }) => {
   const handleSave = async () => {
     try {
       const doctorEntryId = doctorDetails.id;
-      const updateEndpoint = `http://192.168.1.104:1337/api/doctors/${doctorEntryId}`;
+      const updateEndpoint = `https://doc-back-new.onrender.com/api/doctors/${doctorEntryId}`;
 
       const updatePayload = {
         data: {
@@ -86,7 +84,6 @@ const DoctorProfile = ({ route, navigation }) => {
 
       alert("Doctor details updated successfully!");
     } catch (error) {
-      console.error("Error updating doctor details:", error);
       alert("Failed to update details.");
     }
   };
@@ -95,20 +92,17 @@ const DoctorProfile = ({ route, navigation }) => {
     const fetchDoctorDetails = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.1.104:1337/api/users/${doctorId}?populate[doctor][populate]=*`,
+          `https://doc-back-new.onrender.com/api/users/${doctorId}?populate[doctor][populate]=*`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log("Doctor Details:", response.data);
 
         // Assuming the doctor's details are within a nested structure under 'doctor'
         setDoctorDetails(response.data.doctor);
-      } catch (error) {
-        console.error("Error fetching doctor details:", error);
-      }
+      } catch (error) {}
     };
 
     fetchDoctorDetails();

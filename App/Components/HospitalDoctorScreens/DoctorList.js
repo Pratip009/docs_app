@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native'
 
 
 export default function DoctorList({doctorsList}) {
-  // console.log(doctorsList);
+ 
   const navigation=useNavigation();
   return (
     <View style={{marginTop:20 , marginBottom:120}}>

@@ -1,35 +1,63 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import React from "react";
 import Colors from "../../../App/Shared/Colors";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default function HospitalItem({ hospital }) {
+const HospitalItem = ({ hospital }) => {
   return (
-    <View
-      style={{
-        width: 200,
-        borderWidth: 0.8,
-        borderColor: Colors.grey,
-        borderRadius: 10,
-        marginRight: 10,
-      }}
-    >
+    <TouchableOpacity activeOpacity={0.8} style={styles.container}>
       <Image
         source={{ uri: hospital.attributes.Image.data.attributes.url }}
-        style={{
-          width: "100%",
-          height: 110,
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10,
-        }}
+        style={styles.image}
       />
-      <View style={{ padding: 7 }}>
-        <Text style={{ fontFamily: "appfontsemibold", fontSize: 16 }}>
-          {hospital.attributes.Name}
-        </Text>
-        <Text style={{ color: Colors.deepgrey, fontSize: 11 }}>
-          {hospital.attributes.Address}
-        </Text>
+      <View style={styles.content}>
+        <Text style={styles.name}>{hospital.attributes.Name}</Text>
+        <Text style={styles.address}>{hospital.attributes.Address}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: 200,
+    borderRadius: 10,
+    backgroundColor: "#fff", // Background color for the item
+    shadowColor: "#000", // Shadow color
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4, // Android elevation for shadow
+    marginHorizontal: 10,
+    marginBottom: 10,
+  },
+  image: {
+    width: "100%",
+    height: 110,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    objectFit:'cover',
+
+  },
+  content: {
+    padding: 10,
+  },
+  name: {
+    fontFamily: "appfontsemibold",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  speciality: {
+    color: Colors.deepgrey,
+    fontSize: 12,
+  },
+  address: {
+    color: Colors.deepgrey,
+    fontSize: 12,
+  },
+});
+
+export default HospitalItem;

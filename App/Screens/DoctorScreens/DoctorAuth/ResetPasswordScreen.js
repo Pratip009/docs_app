@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import axios from "axios";
 
 const ResetPasswordScreen = ({ route, navigation }) => {
@@ -10,19 +17,27 @@ const ResetPasswordScreen = ({ route, navigation }) => {
   const handleResetPassword = async () => {
     try {
       if (password !== confirmPassword) {
-        Alert.alert("Password Mismatch", "Passwords do not match. Please try again.");
+        Alert.alert(
+          "Password Mismatch",
+          "Passwords do not match. Please try again."
+        );
         return;
       }
 
       const response = await axios.post(
-        "http://192.168.1.104:1337/api/auth/reset-password",
+        "https://doc-back-new.onrender.com/api/auth/reset-password",
         { password, token }
       );
-      Alert.alert("Password Reset", "Your password has been successfully reset.");
+      Alert.alert(
+        "Password Reset",
+        "Your password has been successfully reset."
+      );
       navigation.navigate("doctor-login");
     } catch (error) {
-      console.error("Reset Password Error:", error);
-      Alert.alert("Reset Password Error", "An error occurred while resetting your password.");
+      Alert.alert(
+        "Reset Password Error",
+        "An error occurred while resetting your password."
+      );
     }
   };
 
@@ -43,7 +58,10 @@ const ResetPasswordScreen = ({ route, navigation }) => {
         style={styles.input}
         secureTextEntry={true}
       />
-      <TouchableOpacity onPress={handleResetPassword} style={styles.resetButton}>
+      <TouchableOpacity
+        onPress={handleResetPassword}
+        style={styles.resetButton}
+      >
         <Text style={styles.resetButtonText}>Reset Password</Text>
       </TouchableOpacity>
     </View>

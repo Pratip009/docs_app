@@ -1,17 +1,25 @@
-import { View, Text } from "react-native";
+import { View, Text, Linking, TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import Colors from "../../Shared/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import ActionButton from "../HospitalDetail/ActionButton";
 import SubHeading from "../Home/SubHeading";
 import HorizontalLine from "../Shared/HorizontalLine";
 
 export default function DoctorInfo({ doctor }) {
-  useEffect(() => {
-    console.log(doctor);
-  });
-  
+  const openEmail = () => {
+    if (doctor && doctor.attributes && doctor.attributes.Email) {
+      const email = doctor.attributes.Email.toString();
+
+      const url = `mailto:${email}`;
+
+      Linking.openURL(url)
+        .then(() => console.log("Email client opened successfully"))
+        .catch((error) => console.error("Failed to open email client:", error));
+    } else {
+    }
+  };
+
   return (
     doctor && (
       <View>
@@ -78,11 +86,37 @@ export default function DoctorInfo({ doctor }) {
               color: Colors.deepgrey,
             }}
           >
-            {doctor.attributes.Registration}
+            Registration: {doctor.attributes.Registration}
           </Text>
         </View>
-        <ActionButton />
 
+        <TouchableOpacity onPress={openEmail}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              backgroundColor: Colors.SECONDARY,
+              padding: 13,
+              borderRadius: 10,
+              alignItems: "center",
+              width: 120,
+              marginTop: 15,
+            }}
+          >
+            <Ionicons name="mail" size={25} color={Colors.PRIMARY} />
+            <Text
+              style={{
+                fontFamily: "appfontsemibold",
+
+                marginLeft: 10,
+              }}
+            >
+              Email
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <HorizontalLine />
         <SubHeading subHeadingTitle={"About"} />
         <Text style={{ fontFamily: "appfontlight" }}>
           {doctor.attributes.About}

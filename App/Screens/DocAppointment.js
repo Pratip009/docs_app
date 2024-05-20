@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,54 +5,52 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Alert,
 } from "react-native";
+import React from "react";
+import { useState, useEffect } from "react";
+import DoctorAppointmentCardItem from "../Components/Appointment/DoctorAppointmentCardItem";
 import { useUser } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
-import GlobalApi from "../Services/GlobalApi";
-import AppointmentCardItem from "../Components/Appointment/AppointmentCardItem";
-import PageHeader from "../Components/Shared/PageHeader";
 import Colors from "../Shared/Colors";
+import PageHeader from "../Components/Shared/PageHeader";
 import appimage from "../../assets/Images/warn.png";
-
-export default function Appointment() {
+import GlobalApi from "../Services/GlobalApi";
+export default function DocAppointment() {
   const navigation = useNavigation();
   const { isSignedIn, user } = useUser();
-  const [appointmentList, setAppointmentList] = useState([]);
+  const [doctorAppointmentList, setDoctorAppointmentList] = useState([]);
 
   useEffect(() => {
     if (isSignedIn && user) {
-      getUserAppointments();
-      // getUserDoctorAppointment();
+      getUserDoctorAppointment();
     } else {
       navigation.navigate("signin");
     }
   }, [isSignedIn, user, navigation]);
 
-  const getUserAppointments = async () => {
+  const getUserDoctorAppointment = async () => {
     try {
       const userId = user.id;
       const userEmail = user.primaryEmailAddress.emailAddress;
-      const response = await GlobalApi.getUserAppointments(userId);
+      const response = await GlobalApi.getUserDoctorAppointment(userId);
       const filteredAppointments = response.data.data.filter(
         (appointment) => appointment.attributes.Email === userEmail
       );
-      setAppointmentList(filteredAppointments);
+      setDoctorAppointmentList(filteredAppointments);
     } catch (error) {
-      Alert("Failed to fetch appointments for user:", user, error);
+     
     }
   };
 
-  const handleRemoveAppointment = (appointmentId) => {
+  const handleRemoveDoctorAppointment = (appointmentId) => {
     // Remove the appointment from the list
-    setAppointmentList(
-      appointmentList.filter((appointment) => appointment.id !== appointmentId)
+    setDoctorAppointmentList(
+      doctorAppointmentList.filter(
+        (appointment) => appointment.id !== appointmentId
+      )
     );
-
-    // Fetch and update the latest list of appointments
-    getUserAppointments();
+    getUserDoctorAppointment();
   };
-
   if (!isSignedIn) {
     return (
       <View style={styles.centeredView}>
@@ -69,24 +66,23 @@ export default function Appointment() {
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
-      <PageHeader title={"Chember Appointments"} backButton={false} />
-      {appointmentList.length === 0 ? (
+      <PageHeader title={"Doctor Appointments"} backButton={false} />
+      {doctorAppointmentList.length === 0 ? (
         <View style={styles.emptyListView}>
           <Image source={appimage} style={styles.emptyListImage} />
           <Text style={styles.noAppointmentText}>No appointments booked.</Text>
         </View>
       ) : (
         <FlatList
-          data={appointmentList}
+          data={doctorAppointmentList}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <AppointmentCardItem
+            <DoctorAppointmentCardItem
               appointment={item}
-              onRemove={() => handleRemoveAppointment(item.id)}
+              onRemove={() => handleRemoveDoctorAppointment(item.id)}
             />
           )}
         />
@@ -94,7 +90,6 @@ export default function Appointment() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,25 +1,25 @@
-// AuthContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useUser } from '@clerk/clerk-react';
 
-const AuthContext = createContext(null); 
+
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
+
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const { isSignedIn, user } = useUser();
-  const [authState, setAuthState] = useState({ isSignedIn: false, user: null });
+  const { isSignedIn: initialIsSignedIn, user: initialUser } = useUser();
+  const [authState, setAuthState] = useState({
+    isSignedIn: initialIsSignedIn,
+    user: initialUser,
+  });
 
   useEffect(() => {
-    setAuthState({ isSignedIn, user });
-  }, [isSignedIn, user]);
+    // Initialize the authentication state with the initial values
+    setAuthState({ isSignedIn: initialIsSignedIn, user: initialUser });
+  }, [initialIsSignedIn, initialUser]);
 
   return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-
-

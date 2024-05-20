@@ -30,7 +30,7 @@ export default function HospitalCardItem({ hospital }) {
           }}
         >
           <Ionicons
-            name="md-shield-checkmark-sharp"
+            name="checkmark-done-circle-outline"
             size={18}
             color={Colors.PRIMARY}
           />
@@ -95,8 +95,8 @@ export default function HospitalCardItem({ hospital }) {
             marginTop: 4,
           }}
         >
-          <Ionicons name="eye-sharp" size={20} color={Colors.PRIMARY} />
-          <Text style={{ fontFamily: "appfontlight" }}>658 Views</Text>
+          <Ionicons name="mail" size={20} color={Colors.PRIMARY} />
+          <Text style={{ fontFamily: "appfontlight" }}>{hospital.attributes.Email}</Text>
         </View>
       </View>
     </View>

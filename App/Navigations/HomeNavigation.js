@@ -14,16 +14,15 @@ import BookingSection from "../Components/BookAppointment/BookingSection";
 import SigninScreen from "../Screens/SigninScreen";
 import SignupScreen from "../Screens/SignupScreen";
 import DoctorLogin from "../Screens/DoctorScreens/DoctorAuth/DoctorLogin";
-import DoctorPanel from "../Screens/DoctorScreens/TabScreens/DoctorProfile";
 import DoctorProfile from "../Screens/DoctorScreens/TabScreens/DoctorProfile";
 import DoctorTabNavigtion from "./DoctorTabNavigtion";
 import DoctorHomeNavigation from "./DoctorHomeNavigation";
-import ResetPasswordScreen from "../Screens/DoctorScreens/DoctorAuth/ResetPasswordScreen";
 import MainScreenDoctor from "./MainScreenDoctor";
 import DoctorAppointments from "../Screens/DoctorScreens/TabScreens/DoctorAppointment";
 import DoctorHospitalAppointments from "../Screens/DoctorScreens/TabScreens/DcotorHospitalAppointment";
 import Schedule from "../Screens/DoctorScreens/TabScreens/Schedule";
 import ForgotPassword from "../Screens/ResetPassword";
+import OnboardingScreen from "../Screens/OnboardingScreen";
 
 const Stack = createStackNavigator();
 export default function HomeNavigation() {
@@ -35,6 +34,7 @@ export default function HomeNavigation() {
         name="hospital-doctor-list-screen"
         component={HospitalDoctorsListScreen}
       />
+      <Stack.Screen name="onboarding" component={OnboardingScreen} />
       <Stack.Screen name="hospital-detail" component={HospitalDetails} />
 
       <Stack.Screen name="doctor-detail" component={DoctorDetails} />
@@ -62,6 +62,7 @@ export default function HomeNavigation() {
         component={DoctorProfile}
         options={{ headerShown: false }}
       />
+
       <Stack.Screen
         name="doctor-appointment-screen"
         component={DoctorAppointments}
@@ -70,7 +71,7 @@ export default function HomeNavigation() {
         name="doctor-hospital-appointment-screen"
         component={DoctorHospitalAppointments}
       />
-      <Stack.Screen name="doctor-availability" component={Schedule} />
+      <Stack.Screen name="Schedule" component={Schedule} />
     </Stack.Navigator>
   );
 }

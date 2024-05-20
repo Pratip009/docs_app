@@ -14,13 +14,12 @@ export default function BookingSection({ hospital }) {
   const param = useRoute().params;
 const hospitalId = hospital.id
   useEffect(() => {
-    console.log("hospital:   ", hospital);
-    console.log("Doctors data:", hospital?.attributes?.doctors?.data);
+   
   }, [hospital]);
 
   const navigation = useNavigation();
   const renderDoctor = ({ item }) => {
-    console.log("data", item);
+   
     return (
       <View>
         <TouchableOpacity

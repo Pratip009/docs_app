@@ -23,7 +23,7 @@ const DoctorAppointments = ({ route }) => {
   const fetchDoctorIdAndAppointments = async () => {
     try {
       const userResponse = await axios.get(
-        `http://192.168.1.104:1337/api/users/${doctorId}?populate[doctor][populate]=*`,
+        `https://doc-back-new.onrender.com/api/users/${doctorId}?populate[doctor][populate]=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const DoctorAppointments = ({ route }) => {
       const maindoctorId = userResponse.data.doctor.id;
 
       const appointmentsResponse = await axios.get(
-        `http://192.168.1.104:1337/api/doctors-appointments?filters[doctor][id][$eq]=${maindoctorId}&populate=*`,
+        `https://doc-back-new.onrender.com/api/doctors-appointments?filters[doctor][id][$eq]=${maindoctorId}&populate=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,9 +43,7 @@ const DoctorAppointments = ({ route }) => {
       );
 
       setAppointments(appointmentsResponse.data.data);
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -78,23 +76,21 @@ const DoctorAppointments = ({ route }) => {
       email: appointment.attributes.Email,
       bookingDate: format(
         new Date(appointment.attributes.createdAt),
-        "MM/dd/yyyy"
+        "dd/MM/yyyy"
       ),
     }));
 
     // Format start and end dates
-    const startDateString = format(start, "MM/dd/yyyy");
-    const endDateString = format(end, "MM/dd/yyyy");
+    const startDateString = format(start, "dd/MM/yyyy");
+    const endDateString = format(end, "dd/MM/yyyy");
 
     // Show the number of bookings and details to the user
     Alert.alert(
       "Weekly Report",
       `Number of bookings in the past 7 days: ${numberOfBookings}\n\nBooking details:\n\n${bookingDetails
-        .map(
-          (detail) => `${detail.name} (${detail.email}) - ${detail.bookingDate}`
-        )
+        .map((detail) => `${detail.name} - ${detail.bookingDate}`)
         .join("\n")}\n\nReport from: ${startDateString} to ${endDateString}`,
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      [{ text: "OK" }],
       { cancelable: true }
     );
   };
@@ -124,13 +120,13 @@ const DoctorAppointments = ({ route }) => {
       email: appointment.attributes.Email,
       bookingDate: format(
         new Date(appointment.attributes.createdAt),
-        "MM/dd/yyyy"
+        "dd/MM/yyyy"
       ),
     }));
 
     // Format start and end dates
-    const startDateString = format(start, "MM/dd/yyyy");
-    const endDateString = format(end, "MM/dd/yyyy");
+    const startDateString = format(start, "dd/MM/yyyy");
+    const endDateString = format(end, "dd/MM/yyyy");
 
     // Show the number of bookings and details to the user
     Alert.alert(
@@ -140,7 +136,7 @@ const DoctorAppointments = ({ route }) => {
           (detail) => `${detail.name} (${detail.email}) - ${detail.bookingDate}`
         )
         .join("\n")}\n\nDate Range: ${startDateString} to ${endDateString}`,
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      [{ text: "OK" }],
       { cancelable: true }
     );
   };
@@ -152,7 +148,10 @@ const DoctorAppointments = ({ route }) => {
       "Has the appointment been consulted?",
       [
         { text: "No", onPress: () => updateAppointmentBackground(Colors.red) },
-        { text: "Yes", onPress: () => updateAppointmentBackground(Colors.lightgreen) },
+        {
+          text: "Yes",
+          onPress: () => updateAppointmentBackground(Colors.lightgreen),
+        },
       ],
       { cancelable: true }
     );
@@ -181,6 +180,10 @@ const DoctorAppointments = ({ route }) => {
     <ScrollView style={styles.container}>
       <View style={styles.table}>
         <Text style={styles.header}>Doctor's Appointments</Text>
+        <View style={styles.filterContainer}>
+          <Button onPress={handleWeeklyReport} title="Weekly Booking Stats" />
+          <Button onPress={handleMonthlyReport} title="Monthly Booking Stats" />
+        </View>
         <View style={styles.tableHeader}>
           <Text style={styles.tableHeaderCell}>Name</Text>
           <Text style={styles.tableHeaderCell}>Email</Text>
@@ -242,10 +245,6 @@ const DoctorAppointments = ({ route }) => {
           </View>
         </View>
       </Modal>
-      <View style={styles.filterContainer}>
-        <Button onPress={handleWeeklyReport} title="Weekly Booking Stats" />
-        <Button onPress={handleMonthlyReport} title="Monthly Booking Stats" />
-      </View>
     </ScrollView>
   );
 };

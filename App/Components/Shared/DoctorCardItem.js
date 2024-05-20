@@ -5,7 +5,7 @@ import Colors from "../../../App/Shared/Colors";
 import { useNavigation } from '@react-navigation/native';
 export default function DoctorCardItem({ doctor }) {
   useEffect(() => {
-    console.log("doctor data", doctor);
+    
   }, [doctor]);
   return (
     <View

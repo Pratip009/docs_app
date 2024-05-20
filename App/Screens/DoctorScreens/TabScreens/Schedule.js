@@ -19,7 +19,7 @@ const Schedule = ({ route }) => {
   const fetchDoctorAvailabilities = async () => {
     try {
       const userResponse = await axios.get(
-        `http://192.168.1.104:1337/api/users/${doctorId}?populate[doctor][populate]=*`,
+        `https://doc-back-new.onrender.com/api/users/${doctorId}?populate[doctor][populate]=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ const Schedule = ({ route }) => {
       const mainDoctorId = userResponse.data.doctor.id;
 
       const response = await axios.get(
-        `http://192.168.1.104:1337/api/availabilities?filters[doctor][id][$eq]=${mainDoctorId}&populate=*`,
+        `https://doc-back-new.onrender.com/api/availabilities?filters[doctor][id][$eq]=${mainDoctorId}&populate=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -40,9 +40,7 @@ const Schedule = ({ route }) => {
 
       setAvailabilities(response.data.data);
       setUpdatedAvailabilities(response.data.data);
-    } catch (error) {
-      console.error("Error fetching availabilities:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -53,15 +51,23 @@ const Schedule = ({ route }) => {
     try {
       const promises = updatedAvailabilities.map(async (availability) => {
         const { id, attributes } = availability;
+
         const data = {
           data: {
-            id,
-            attributes,
+            StartTime: attributes.StartTime,
+            EndTime: attributes.EndTime,
+            day: {
+              data: {
+                attributes: {
+                  Day: attributes.day.data.attributes.Day,
+                },
+              },
+            },
           },
         };
 
-        await axios.put(
-          `http://192.168.1.104:1337/api/availabilities/${id}`,
+        const response = await axios.put(
+          `https://doc-back-new.onrender.com/api/availabilities/${id}?populate=*`,
           data,
           {
             headers: {
@@ -69,12 +75,16 @@ const Schedule = ({ route }) => {
             },
           }
         );
+
+        // Log the response from the backend
+
+        return response.data; // Return the response data
       });
 
-      await Promise.all(promises);
+      const updatedData = await Promise.all(promises);
+
       Alert.alert("Success", "Availabilities updated successfully.");
     } catch (error) {
-      console.error("Error updating availabilities:", error);
       Alert.alert(
         "Error",
         "Failed to update availabilities. Please try again later."
@@ -86,29 +96,29 @@ const Schedule = ({ route }) => {
     const newAvailabilities = [...updatedAvailabilities];
     const availability = { ...newAvailabilities[index] };
 
-    // Check if each nested property exists before updating
     if (!availability.attributes) {
       availability.attributes = {};
     }
-    if (!availability.attributes.hospital) {
-      availability.attributes.hospital = { data: { attributes: {} } };
-    }
-    if (!availability.attributes.day) {
-      availability.attributes.day = { data: { attributes: {} } };
-    }
-    if (!availability.attributes.area) {
-      availability.attributes.area = { data: { attributes: {} } };
+
+    // Check if day data exists
+    if (!availability.attributes.day || !availability.attributes.day.data) {
+      availability.attributes.day = { data: { attributes: {} } }; // Initialize day data
     }
 
     // Update the value for the specified field
     if (field === "StartTime" || field === "EndTime") {
       availability.attributes[field] = value;
+    } else if (field === "day") {
+      availability.attributes.day.data.attributes.Day = value; // Update day attribute
     } else {
-      // Update nested attributes
-      availability.attributes[field].data.attributes[field] = value;
+      // Handle nested data
+      const [relation, nestedField] = field.split("."); // Extract relation and nested field
+      if (!availability.attributes[relation]) {
+        availability.attributes[relation] = { data: { attributes: {} } }; // Initialize relation data if not exist
+      }
+      availability.attributes[relation].data.attributes[nestedField] = value; // Update nested field attribute
     }
 
-    // Update the updatedAvailabilities state
     newAvailabilities[index] = availability;
     setUpdatedAvailabilities(newAvailabilities);
   };

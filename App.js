@@ -1,23 +1,36 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import Login from "./App/Screens/Login";
+import { StyleSheet, Text, View, SafeAreaView, Dimensions } from "react-native";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import Home from "./App/Screens/Home";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigation from "./App/Navigations/TabNavigation";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthProvider, useAuth } from "./AuthContext";
+import SplashScreens from "./App/Screens/SplashScreens";
 import { useFonts } from "expo-font";
+import { useState, useEffect } from "react";
+
+
 const Stack = createStackNavigator();
 export default function App() {
+  const [isSplashScreenVisible, setIsSplashScreenVisible] = useState(true);
+
   const [fontsLoaded] = useFonts({
     appfont: require("./assets/fonts/Outfit-Regular.ttf"),
     appfontbold: require("./assets/fonts/Outfit-Bold.ttf"),
     appfontsemibold: require("./assets/fonts/Outfit-SemiBold.ttf"),
     appfontlight: require("./assets/fonts/Outfit-Light.ttf"),
   });
-  if (!fontsLoaded) {
-    return null;
+  useEffect(() => {
+    setTimeout(() => {
+      setIsSplashScreenVisible(false);
+    }, 3000);
+    // Log the screen size
+    const { width, height } = Dimensions.get("window");
+    console.log(`Screen width: ${width}, Screen height: ${height}`);
+  }, []);
+
+  if (!fontsLoaded || isSplashScreenVisible) {
+    return <SplashScreens />; // Show the splash screen while loading fonts or for the first 3 seconds
   }
   return (
     <ClerkProvider
@@ -43,4 +56,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
-

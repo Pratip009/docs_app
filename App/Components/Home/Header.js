@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity,Alert } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import React from "react";
 import { useUser } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +21,7 @@ export default function Header() {
         },
         {
           text: "No",
-          onPress: () => console.log("Not a doctor"),
+          
           style: "cancel",
         },
       ],
@@ -95,10 +95,14 @@ export default function Header() {
         <TouchableOpacity onPress={handleDoctorPress}>
           <Image
             source={app}
-            style={{ width: 28, height: 28, marginRight: 10 }}
+            style={{ width: 28, height: 25, marginRight: 10 }}
           />
         </TouchableOpacity>
-        <Ionicons name="md-notifications" size={28} color={Colors.PRIMARY} />
+        <Ionicons
+          name="notifications-circle-outline"
+          size={28}
+          color={Colors.PRIMARY}
+        />
       </View>
     </View>
   );

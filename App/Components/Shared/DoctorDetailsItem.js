@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../../App/Shared/Colors";
 
 const DoctorDetailsItem = ({ doctor }) => {
-  console.log("doctor detaillllllssss:   ", doctor.id);
+  
 
   const doctorName = doctor.attributes?.Name || "Unknown";
   const doctorCategory = doctor.attributes?.Speciality || "No Category";

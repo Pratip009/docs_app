@@ -26,7 +26,7 @@ const DoctorHospitalAppointments = ({ route }) => {
   const fetchDoctorIdAndAppointments = async () => {
     try {
       const userResponse = await axios.get(
-        `http://192.168.1.104:1337/api/users/${doctorId}?populate[doctor][populate]=*`,
+        `https://doc-back-new.onrender.com/api/users/${doctorId}?populate[doctor][populate]=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ const DoctorHospitalAppointments = ({ route }) => {
       const maindoctorId = userResponse.data.doctor.id;
 
       const appointmentsResponse = await axios.get(
-        `http://192.168.1.104:1337/api/hospital-appointments?filters[doctor][id][$eq]=${maindoctorId}&populate=*`,
+        `https://doc-back-new.onrender.com/api/hospital-appointments?filters[doctor][id][$eq]=${maindoctorId}&populate=*`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,9 +46,7 @@ const DoctorHospitalAppointments = ({ route }) => {
       );
 
       setAppointments(appointmentsResponse.data.data);
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-    }
+    } catch (error) {}
   };
 
   // Function to calculate the date range for the past 7 days
@@ -87,7 +85,7 @@ const DoctorHospitalAppointments = ({ route }) => {
     Alert.alert(
       "Weekly Report",
       `Number of bookings in the past 7 days: ${numberOfBookings}\nNumber of canceled bookings: ${numberOfCanceledBookings}`,
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      [{ text: "OK" }],
       { cancelable: true }
     );
   };
@@ -105,7 +103,7 @@ const DoctorHospitalAppointments = ({ route }) => {
     Alert.alert(
       "Monthly Report",
       `Number of bookings in the current month: ${numberOfBookings}\nNumber of canceled bookings: ${numberOfCanceledBookings}`,
-      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      [{ text: "OK" }],
       { cancelable: true }
     );
   };
@@ -117,7 +115,10 @@ const DoctorHospitalAppointments = ({ route }) => {
       "Has the appointment been consulted?",
       [
         { text: "No", onPress: () => updateAppointmentBackground(Colors.red) },
-        { text: "Yes", onPress: () => updateAppointmentBackground(Colors.lightgreen) },
+        {
+          text: "Yes",
+          onPress: () => updateAppointmentBackground(Colors.lightgreen),
+        },
       ],
       { cancelable: true }
     );

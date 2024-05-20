@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -11,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
   ToastAndroid,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import Colors from "../../Shared/Colors";
@@ -19,7 +18,7 @@ import SubHeading from "../Home/SubHeading";
 import { useUser } from "@clerk/clerk-expo";
 import GlobalApi from "../../Services/GlobalApi";
 
-const API_URL = `http://192.168.1.104:1337/api/doctors/`;
+const API_URL = `https://doc-back-new.onrender.com/api/doctors/`;
 
 export default function BookingDoctorSection({ doctor }) {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -33,12 +32,23 @@ export default function BookingDoctorSection({ doctor }) {
   const [notes, setNotes] = useState();
   const [address, setAddress] = useState();
   const [loader, setLoader] = useState(false);
-
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [availableDays, setAvailableDays] = useState([]);
   const doctorId = doctor.id;
 
   useEffect(() => {
-    console.log("Doctor's name:", doctor.attributes.Name);
+    if (selectedHospital) {
+      const detailsForHospital = filterDaysByHospital(selectedHospital);
 
+      const days = detailsForHospital.map(
+        (item) => item.attributes.day.data.attributes.Day
+      );
+
+      setAvailableDays(days);
+    }
+  }, [selectedHospital]);
+
+  useEffect(() => {
     const fetchDoctorDetails = async () => {
       try {
         setLoading(true);
@@ -49,7 +59,6 @@ export default function BookingDoctorSection({ doctor }) {
           response?.data?.data?.attributes?.availabilities?.data ?? [];
         setDoctorDetails(availabilities);
       } catch (error) {
-        console.error("Failed to fetch doctor details:", error);
         ToastAndroid.show("Failed to fetch data", ToastAndroid.SHORT);
       } finally {
         setLoading(false);
@@ -59,17 +68,47 @@ export default function BookingDoctorSection({ doctor }) {
     fetchDoctorDetails();
   }, [doctorId]);
 
+  const generateDatesForNextTwoMonths = (selectedDay) => {
+    const dates = [];
+    let currentDate = moment().startOf("month");
+    const endOfMonth = moment().add(2, "months").endOf("month");
+
+    while (currentDate.isBefore(endOfMonth)) {
+      const currentDay = currentDate.format("dddd");
+      if (currentDay === selectedDay) {
+        dates.push(currentDate.format("YYYY-MM-DD"));
+      }
+      currentDate.add(1, "day");
+    }
+
+    return dates;
+  };
   const generateTimeSlots = (startTime, endTime) => {
-    let start = moment(startTime, "HH:mm");
-    let end = moment(endTime, "HH:mm");
+    let start = moment(startTime, "h:mm A");
+    let end = moment(endTime, "h:mm A");
     let slots = [];
 
-    while (start < end) {
-      slots.push(start.format("HH:mm"));
+    while (start.isBefore(end)) {
+      const formattedSlot = start.format("hh:mm A");
+      slots.push(formattedSlot);
       start.add(15, "minutes");
     }
 
     return slots;
+  };
+
+  const filterUniqueChambers = (chambers) => {
+    const uniqueChambers = [];
+    const chamberNames = new Set();
+
+    chambers.forEach((chamber) => {
+      if (!chamberNames.has(chamber.attributes.hospital.data.id)) {
+        uniqueChambers.push(chamber);
+        chamberNames.add(chamber.attributes.hospital.data.id);
+      }
+    });
+
+    return uniqueChambers;
   };
 
   const uniqueAreas = [
@@ -98,13 +137,31 @@ export default function BookingDoctorSection({ doctor }) {
     );
   };
 
-  if (loading) {
-    return <ActivityIndicator size="large" />;
-  }
+  const filterAvailableDays = () => {
+    const availableDays = [];
+
+    for (
+      let date = moment(startDate);
+      date.isBefore(endDate);
+      date.add(1, "day")
+    ) {
+      const day = date.format("dddd");
+      if (
+        doctorDetails.some(
+          (item) =>
+            item.attributes.day?.data?.attributes?.Day === day &&
+            item.attributes.area?.data?.attributes?.Location === selectedArea &&
+            item.attributes.hospital?.data?.id === selectedHospital
+        )
+      ) {
+        availableDays.push(day);
+      }
+    }
+
+    return availableDays;
+  };
+
   const bookDoctorAppointment = () => {
-    console.log("Booking for Area:", selectedArea);
-    console.log("Booking for day:", selectedDay);
-    console.log("Booking for hospital:", selectedHospital);
     setLoader(true);
     const data = {
       data: {
@@ -117,22 +174,19 @@ export default function BookingDoctorSection({ doctor }) {
         hospital: selectedHospital,
         Time: selectedTimeSlot,
         address: address,
+        date: selectedDate,
       },
     };
-    console.log(data);
 
     GlobalApi.createDoctorAppointment(data).then(
       (resp) => {
-        console.log(resp);
         if (resp.status >= 200 && resp.status < 300) {
-          // Check if status code indicates success
           setLoader(false);
           ToastAndroid.show(
             "Appointment Booked Successfully!",
             ToastAndroid.LONG
           );
         } else {
-          // Handle non-successful status codes
           setLoader(false);
           ToastAndroid.show(
             "Failed to book appointment. Please try again.",
@@ -141,31 +195,27 @@ export default function BookingDoctorSection({ doctor }) {
         }
       },
       (error) => {
-        console.error("Error booking appointment:", error);
         setLoader(false);
         if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.log(error.response.data);
-          console.log(error.response.status);
-          console.log(error.response.headers);
-          ToastAndroid.show("Error: " + JSON.stringify(error.response.data), ToastAndroid.LONG);
+          ToastAndroid.show(
+            "Error: " + JSON.stringify(error.response.data),
+            ToastAndroid.LONG
+          );
         } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request);
         } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message);
+          Alert(error);
         }
       }
     );
   };
+
   return (
     <ScrollView style={styles.container}>
       <SubHeading subHeadingTitle={"Areas"} />
       <FlatList
         horizontal
         data={uniqueAreas}
+        showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => `area-${index}`}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -191,13 +241,13 @@ export default function BookingDoctorSection({ doctor }) {
           </TouchableOpacity>
         )}
       />
-      <SubHeading subHeadingTitle={"Chembers"} />
+      <SubHeading subHeadingTitle={"Chambers"} />
 
       {selectedArea && (
         <FlatList
-          data={filterHospitalsByArea(selectedArea)}
-          keyExtractor={(item) =>
-            `hospital-${item.attributes.hospital.data.id}`
+          data={filterUniqueChambers(filterHospitalsByArea(selectedArea))}
+          keyExtractor={(item, index) =>
+            `hospital-${item.attributes.hospital.data.id}-${index}`
           }
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -206,8 +256,8 @@ export default function BookingDoctorSection({ doctor }) {
                 {
                   backgroundColor:
                     item.attributes.hospital.data.id === selectedHospital
-                      ? Colors.PRIMARY // Color when selected
-                      : "white", // Default color
+                      ? Colors.PRIMARY
+                      : "white",
                 },
               ]}
               onPress={() =>
@@ -236,7 +286,9 @@ export default function BookingDoctorSection({ doctor }) {
       {selectedHospital && (
         <FlatList
           data={filterDaysByHospital(selectedHospital)}
-          keyExtractor={(item) => `day-${item.attributes.day.data.id}`}
+          keyExtractor={(item, index) =>
+            `day-${item.attributes.day.data.id}-${index}`
+          }
           renderItem={({ item }) => (
             <TouchableOpacity
               style={[
@@ -244,8 +296,8 @@ export default function BookingDoctorSection({ doctor }) {
                 {
                   backgroundColor:
                     item.attributes.day.data.attributes.Day === selectedDay
-                      ? Colors.PRIMARY // Color when selected
-                      : "white", // Default color
+                      ? Colors.PRIMARY
+                      : "white",
                 },
               ]}
               onPress={() =>
@@ -268,6 +320,42 @@ export default function BookingDoctorSection({ doctor }) {
             </TouchableOpacity>
           )}
         />
+      )}
+      <SubHeading subHeadingTitle={"Available Dates"} />
+
+      {selectedDay && (
+        <View style={styles.dateContainer}>
+          {generateDatesForNextTwoMonths(selectedDay).map((item, index) => (
+            <View key={`date-row-${index}`} style={styles.dateRow}>
+              {generateDatesForNextTwoMonths(selectedDay)
+                .slice(index * 3, index * 3 + 3)
+                .map((date, subIndex) => (
+                  <TouchableOpacity
+                    key={`date-${index}-${subIndex}`}
+                    style={[
+                      styles.datebutton,
+                      {
+                        backgroundColor:
+                          date === selectedDate ? Colors.PRIMARY : "white",
+                      },
+                    ]}
+                    onPress={() => setSelectedDate(date)}
+                  >
+                    <Text
+                      style={[
+                        styles.slottextdate,
+                        {
+                          color: date === selectedDate ? "white" : "black",
+                        },
+                      ]}
+                    >
+                      {moment(date).format("DD MMM YYYY")}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          ))}
+        </View>
       )}
       <SubHeading subHeadingTitle={"Time Slots"} />
 
@@ -295,8 +383,8 @@ export default function BookingDoctorSection({ doctor }) {
                         {
                           backgroundColor:
                             slot === selectedTimeSlot
-                              ? Colors.PRIMARY // Change the color when selected
-                              : "white", // Default color
+                              ? Colors.PRIMARY
+                              : "white",
                         },
                       ]}
                     >
@@ -305,9 +393,7 @@ export default function BookingDoctorSection({ doctor }) {
                           styles.slotText,
                           {
                             color:
-                              slot === selectedTimeSlot
-                                ? "white" // Change the color when selected
-                                : "black", // Default color
+                              slot === selectedTimeSlot ? "white" : "black",
                           },
                         ]}
                       >
@@ -325,14 +411,7 @@ export default function BookingDoctorSection({ doctor }) {
       <TextInput
         numberOfLines={2}
         onChangeText={(value) => setAddress(value)}
-        style={{
-          backgroundColor: Colors.grey,
-          padding: 10,
-          borderRadius: 10,
-          borderColor: Colors.SECONDARY,
-          borderWidth: 1,
-          textAlignVertical: "top",
-        }}
+        style={styles.input}
         placeholder="Write Your Address Here"
       />
 
@@ -340,41 +419,16 @@ export default function BookingDoctorSection({ doctor }) {
       <TextInput
         numberOfLines={3}
         onChangeText={(value) => setNotes(value)}
-        style={{
-          backgroundColor: Colors.grey,
-          padding: 10,
-          borderRadius: 10,
-          borderColor: Colors.SECONDARY,
-          borderWidth: 1,
-          textAlignVertical: "top",
-        }}
+        style={styles.input}
         placeholder="Write Notes Here"
       />
       <TouchableOpacity
         onPress={() => bookDoctorAppointment()}
         disabled={loader}
-        style={{
-          padding: 13,
-          backgroundColor: Colors.PRIMARY,
-          margin: 10,
-          borderRadius: 99,
-          left: 0,
-          right: 0,
-          marginBottom: 10,
-          zIndex: 20,
-        }}
+        style={styles.button}
       >
         {!loader ? (
-          <Text
-            style={{
-              color: Colors.white,
-              textAlign: "center",
-              fontFamily: "appfontsemibold",
-              fontSize: 17,
-            }}
-          >
-            Make Appointment
-          </Text>
+          <Text style={styles.buttonText}>Make Appointment</Text>
         ) : (
           <ActivityIndicator />
         )}
@@ -393,27 +447,73 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingVertical: 15,
     paddingHorizontal: 20,
-    borderRadius: 99,
-
+    borderRadius: 10,
+    borderColor: Colors.grey,
+    borderWidth: 1,
     alignSelf: "flex-start",
   },
-  text: {
-    color: "#fff",
+  datebutton: {
+    margin: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderColor: Colors.grey,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+    width: "31%",
+  },
+  dateContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dateRow: {
+    flexDirection: "row",
+  },
+  input: {
+    backgroundColor: Colors.white,
+    padding: 10,
+    borderRadius: 10,
+    borderColor: Colors.grey,
+    borderWidth: 1,
+    textAlignVertical: "top",
+    marginVertical: 10,
+  },
+  button: {
+    padding: 13,
+    backgroundColor: Colors.PRIMARY,
+    margin: 10,
+    borderRadius: 99,
+    left: 0,
+    right: 0,
+    marginBottom: 10,
+    zIndex: 20,
+  },
+  buttonText: {
+    color: Colors.white,
+    textAlign: "center",
+    fontFamily: "appfontsemibold",
+    fontSize: 17,
   },
   item: {
     padding: 10,
     marginVertical: 8,
   },
   slot: {
-    marginHorizontal: 15,
+    marginHorizontal: 5,
     paddingVertical: 20,
     paddingHorizontal: 15,
     backgroundColor: "white",
-    borderRadius: 99,
+    borderRadius: 10,
+    borderColor: Colors.grey,
     borderWidth: 1,
   },
   slotText: {
     color: "black",
-    fontFamily: "appfontsemibold", // Adjusted for visibility
+    fontFamily: "appfontsemibold",
+  },
+  slottextdate: {
+    fontSize: 13,
+    fontFamily: "appfontsemibold",
   },
 });

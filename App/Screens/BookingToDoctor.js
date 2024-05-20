@@ -38,9 +38,11 @@ export default function BookingToDoctor() {
 
   useEffect(() => {
     getDays();
-    console.log("Hospital ID:", hospital?.id);
-    console.log("doctor ID:", doctor?.id);
+
     getTime();
+    if (isSignedIn && user?.fullName) {
+      setName(user.fullName);
+    }
   }, []);
 
   const getDays = () => {
@@ -96,10 +98,10 @@ export default function BookingToDoctor() {
         note: notes,
       },
     };
-    console.log("Data being sent to the API:", JSON.stringify(data, null, 2));
+
     GlobalApi.createHospitalAppointment(data).then(
       (resp) => {
-        console.log("Appointment booking response:", resp);
+      
         setLoader(false); // Hide loader
         ToastAndroid.show(
           "Appointment Booked Successfully!",
@@ -108,7 +110,7 @@ export default function BookingToDoctor() {
       },
       (error) => {
         // More explicit error handling
-        console.error("Error booking appointment:", error);
+        Alert("Error booking appointment:", error);
         setLoader(false); // Hide loader
 
         // Displaying the error message to the user might help in diagnosing
@@ -123,8 +125,7 @@ export default function BookingToDoctor() {
   const route = useRoute();
   const { doctor, hospital } = route.params;
   useEffect(() => {
-    console.log("Hospital Name:", hospital);
-    console.log("Doctor Details:", doctor);
+    
   }, [hospital, doctor]);
   return (
     doctor && (
@@ -259,6 +260,7 @@ export default function BookingToDoctor() {
                     textAlignVertical: "top",
                   }}
                   placeholder="Write Your Name Here"
+                  value={name}
                 />
                 <SubHeading subHeadingTitle={"Age"} seelAll={false} />
                 <TextInput

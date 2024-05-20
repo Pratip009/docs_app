@@ -22,15 +22,14 @@ const DoctorLogin = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.1.104:1337/api/auth/local",
+        "https://doc-back-new.onrender.com/api/auth/local",
         {
           identifier: email,
           password: password,
         }
       );
-      console.log("response:", response.data.data);
+
       const { jwt, user } = response.data;
-      console.log("JWT Token:", jwt);
 
       const doctorId = user.id;
 
@@ -42,20 +41,10 @@ const DoctorLogin = () => {
           doctorId: doctorId.toString(),
           token: jwt,
         });
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [
-        //     {
-        //       name: "doctortab",
-        //       params: { doctorId: doctorId.toString(), token: jwt },
-        //     },
-        //   ],
-        // });
       } else {
         Alert.alert("Login Failed", "Please check your credentials");
       }
     } catch (error) {
-      console.log(error);
       Alert.alert("Login Error", "An error occurred during login");
     }
   };
@@ -81,9 +70,6 @@ const DoctorLogin = () => {
       />
       <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
         <Text style={styles.loginButtonText}>Log In</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
     </View>
   );

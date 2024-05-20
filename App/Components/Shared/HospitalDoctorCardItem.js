@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../../App/Shared/Colors";
 export default function HospitalDoctorCardItem({ hospital }) {
   useEffect(() => {
-    console.log("doctor data", hospital);
+   
   }, [hospital]);
   return (
     <View

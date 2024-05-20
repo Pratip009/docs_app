@@ -22,7 +22,7 @@ export default function ForgotPassword() {
       setSuccessfulCreation(true);
       setError("");
     } catch (err) {
-      console.error("Error sending password reset code:", err.message);
+      
       setError(err.message);
     }
   }
@@ -30,13 +30,14 @@ export default function ForgotPassword() {
   // Reset the user's password
   async function resetPassword() {
     try {
-      console.log("Attempting to reset password...");
+      
       const result = await signIn.attemptFirstFactor({
         strategy: "reset_password",
         code,
         password,
       });
-      console.log("Reset password result:", result);
+  
+  
       if (result.status === "needs_second_factor") {
         setSecondFactor(true);
         setError("");
@@ -44,13 +45,22 @@ export default function ForgotPassword() {
         setActive({ session: result.createdSessionId });
         setError("");
       } else {
-        console.log(result);
+        // Handle unexpected result status
+       
+        setError("An unexpected error occurred while resetting the password. Please try again later.");
       }
     } catch (err) {
-      console.error("Error resetting password:", err);
-      setError("An error occurred while resetting the password. Please try again later.");
+      // Log the error object to get more details
+    
+      
+      // Check if the error object has a message property
+      const errorMessage = err.message || "An unknown error occurred while resetting the password. Please try again later.";
+  
+      // Set the error message state
+      setError(errorMessage);
     }
   }
+  
   
   
   
