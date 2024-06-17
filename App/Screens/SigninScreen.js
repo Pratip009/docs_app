@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons"; // Import Ionicons
+import { Ionicons } from "@expo/vector-icons";
 import appImage from "../../assets/Images/login.gif";
 import Colors from "../Shared/Colors";
 
@@ -25,24 +25,27 @@ export default function SignInScreen() {
   const onSignInPress = async () => {
     if (!isLoaded || loading) return;
 
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedUsername || !trimmedPassword) {
+      Alert.alert("Error", "Username and password cannot be empty.");
+      return;
+    }
+
     try {
       setLoading(true);
       const completeSignIn = await signIn.create({
-        identifier: username,
-        password,
+        identifier: trimmedUsername,
+        password: trimmedPassword,
       });
 
-      navigation.navigate("Home");
+      console.log("Sign-in response: ", completeSignIn);
       await setActive({ session: completeSignIn.createdSessionId });
+      navigation.navigate("Home");
     } catch (err) {
-      if (err.message === "Password incorrect") {
-        Alert.alert(
-          "Wrong Password",
-          "Please check your password and try again."
-        );
-      } else {
-      
-      }
+      console.error("Sign-in error: ", err);
+      Alert.alert("Sign-in Error", err.message);
     } finally {
       setLoading(false);
     }
@@ -72,7 +75,7 @@ export default function SignInScreen() {
             onChangeText={(password) => setPassword(password)}
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={onSignInPress}>
+        <TouchableOpacity style={styles.button} onPress={onSignInPress} disabled={loading}>
           {loading ? (
             <ActivityIndicator color="#000000" />
           ) : (

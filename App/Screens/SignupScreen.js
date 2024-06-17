@@ -10,9 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from "react-native";
-
-import { useSignUp } from "@clerk/clerk-expo";
+import { useSignUp, useSession, useClerk } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
 import app from "../../assets/Images/signup.gif";
 import otherImage from "../../assets/Images/dw.png";
@@ -20,6 +20,8 @@ import Colors from "../Shared/Colors";
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { signOut } = useClerk();
+  const session = useSession();
   const navigation = useNavigation();
 
   const [firstName, setFirstName] = useState("");
@@ -30,19 +32,27 @@ export default function SignUpScreen() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
   const [verificationImage, setVerificationImage] = useState(app);
-  const [signUpLoading, setSignUpLoading] = useState(false); // State for signup loading
-  const [verificationLoading, setVerificationLoading] = useState(false); // State for verification loading
+  const [signUpLoading, setSignUpLoading] = useState(false);
+  const [verificationLoading, setVerificationLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoaded) return;
   }, [isLoaded]);
 
+  const handleExistingSession = async () => {
+    if (session && session.id) {
+      console.log("An existing session was found, signing out...");
+      await signOut();
+    }
+  };
+
   const onSignUpPress = async () => {
     if (!isLoaded || signUpLoading) return;
 
     try {
-      setSignUpLoading(true); // Start signup loading
-      await signUp.create({
+      await handleExistingSession();
+      setSignUpLoading(true);
+      const signUpResult = await signUp.create({
         firstName,
         lastName,
         username,
@@ -50,13 +60,29 @@ export default function SignUpScreen() {
         password,
       });
 
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      console.log("Sign-up success: ", signUpResult);
 
-      setPendingVerification(true);
+      if (signUpResult.status === "missing_requirements") {
+        await signUp.prepareEmailAddressVerification({
+          strategy: "email_code",
+        });
+        setPendingVerification(true);
+      } else {
+        Alert.alert(
+          "Sign-up Error",
+          "Missing required fields or other issues."
+        );
+      }
     } catch (err) {
-      
+      console.error("Sign-up error: ", err);
+      Alert.alert(
+        "Sign-up Error",
+        err?.message ||
+          JSON.stringify(err) ||
+          "An unknown error occurred during sign-up."
+      );
     } finally {
-      setSignUpLoading(false); // Stop signup loading
+      setSignUpLoading(false);
     }
   };
 
@@ -64,21 +90,35 @@ export default function SignUpScreen() {
     if (!isLoaded || verificationLoading) return;
 
     try {
-      setVerificationLoading(true); // Start verification loading
+      setVerificationLoading(true);
+
+      // Send the verification code as plain text
       const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code,
+        code: code,
       });
 
-  
+      console.log("Verification response:", completeSignUp); // Log full response object
 
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
         navigation.navigate("Home");
       } else {
-
+        console.error("Verification incomplete:", completeSignUp); // Log if verification is incomplete
+        Alert.alert("Verification Error", "Verification incomplete. Please try again.");
       }
     } catch (err) {
-     
+      console.error("Verification error:", err); // Log the verification error
+
+      // Check if there's a specific message in the error response
+      if (err?.response?.data?.message) {
+        console.log("Error message from API:", err.response.data.message);
+        Alert.alert("Verification Error", err.response.data.message);
+      } else {
+        Alert.alert(
+          "Verification Error",
+          err?.message || "An unknown error occurred during verification."
+        );
+      }
     } finally {
       setVerificationLoading(false); // Stop verification loading
     }
@@ -170,9 +210,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     paddingTop: 50,
-    paddingBottom: 20, // Add padding bottom
+    paddingBottom: 20,
     backgroundColor: "white",
-    flex: 1, // Ensure the container takes up the entire screen
+    flex: 1,
   },
   image: {
     width: 200,
